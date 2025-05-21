@@ -12,7 +12,12 @@ BUCKET_NAME = "sitelevel-reports"
 S3_KEY = "scoreboard/richardson/latest.pdf"
 
 # --- Use AWS credentials from local config (~/.aws/credentials) ---
-s3 = boto3.client("s3", region_name="us-east-1")
+s3 = boto3.client(
+    "s3",
+    aws_access_key_id=st.secrets["AWS_ACCESS_KEY_ID"],
+    aws_secret_access_key=st.secrets["AWS_SECRET_ACCESS_KEY"],
+    region_name=st.secrets["AWS_DEFAULT_REGION"]
+)
 
 # --- Hide all Streamlit UI + force fullscreen layout ---
 st.set_page_config(page_title="", layout="wide")
