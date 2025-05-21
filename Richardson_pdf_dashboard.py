@@ -4,7 +4,7 @@ from botocore.exceptions import NoCredentialsError, ClientError
 import base64
 from datetime import datetime
 import pytz
-
+import streamlit.components.v1 as components
 
 
 # --- S3 Config ---
@@ -86,7 +86,7 @@ try:
             style="position: fixed; top: 0; left: 0; bottom: 0; right: 0; border: none;"
         ></iframe>
     """
-    st.markdown(pdf_display, unsafe_allow_html=True)
+    components.html(pdf_display, height=1080, width=1920)
 
 except s3.exceptions.NoSuchKey:
     st.error("❌ No PDF report found.")
