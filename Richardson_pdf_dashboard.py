@@ -50,13 +50,12 @@ st.markdown(
     <script>
     const targetHour = 12;
     const targetMinute = 30;
-    
+
     function getTimeUntilRefresh() {
         const now = new Date();
         const next = new Date();
         next.setHours(targetHour, targetMinute, 0, 0);
 
-        // If it's already past 12:30 today, set for tomorrow
         if (now > next) {
             next.setDate(next.getDate() + 1);
         }
@@ -80,10 +79,14 @@ try:
 
     # --- Render fullscreen PDF ---
     pdf_display = f"""
-        <iframe src="data:application/pdf;base64,{base64_pdf}"></iframe>
+        <iframe
+            src="data:application/pdf;base64,{base64_pdf}#toolbar=0&navpanes=0"
+            width="100%"
+            height="100%"
+            style="position: fixed; top: 0; left: 0; bottom: 0; right: 0; border: none;"
+        ></iframe>
     """
     st.markdown(pdf_display, unsafe_allow_html=True)
-
 
 except s3.exceptions.NoSuchKey:
     st.error("❌ No PDF report found.")
