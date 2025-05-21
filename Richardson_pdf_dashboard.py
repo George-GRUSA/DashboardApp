@@ -2,6 +2,9 @@ import streamlit as st
 import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
 import base64
+from datetime import datetime
+import pytz
+
 
 
 # --- S3 Config ---
@@ -38,6 +41,28 @@ st.markdown(
             border: none;
         }
     </style>
+
+    <script>
+    const targetHour = 12;
+    const targetMinute = 30;
+    
+    function getTimeUntilRefresh() {
+        const now = new Date();
+        const next = new Date();
+        next.setHours(targetHour, targetMinute, 0, 0);
+
+        // If it's already past 12:30 today, set for tomorrow
+        if (now > next) {
+            next.setDate(next.getDate() + 1);
+        }
+
+        return next - now;
+    }
+
+    setTimeout(function() {
+        location.reload();
+    }, getTimeUntilRefresh());
+    </script>
     """,
     unsafe_allow_html=True
 )
@@ -54,6 +79,7 @@ try:
     """
     st.markdown(pdf_display, unsafe_allow_html=True)
 
+
 except s3.exceptions.NoSuchKey:
     st.error("❌ No PDF report found.")
 except NoCredentialsError:
@@ -63,3 +89,7 @@ except ClientError as e:
 except Exception as e:
     st.error(f"❌ Unexpected error: {e}")
 
+meta = s3.head_object(Bucket=BUCKET_NAME, Key=S3_KEY)
+last_modified = meta['LastModified'].astimezone(pytz.timezone('America/Chicago'))
+
+st.caption(f"Last updated: {last_modified.strftime('%Y-%m-%d %I:%M %p CT')}")
